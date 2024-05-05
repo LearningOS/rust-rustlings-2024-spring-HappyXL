@@ -2,7 +2,7 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
+// I AM DONE
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
@@ -29,13 +29,13 @@ struct LinkedList<T> {
     end: Option<NonNull<Node<T>>>,
 }
 
-impl<T> Default for LinkedList<T> {
+impl<T: PartialOrd + PartialEq> Default for LinkedList<T> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<T> LinkedList<T> {
+impl<T: PartialOrd + PartialEq> LinkedList<T> {
     pub fn new() -> Self {
         Self {
             length: 0,
@@ -71,12 +71,93 @@ impl<T> LinkedList<T> {
     }
 	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
 	{
-		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+		//TODO Done
+        //if 
+        //let length = list_a.length + list_b.length;
+        
+        let mut linkedList = LinkedList::new();
+        if list_a.length == 0 && list_b.length == 0 {
+            return linkedList;
+        } else if list_a.length == 0 {
+            return list_b;
+        } else if list_b.length == 0 {
+            return list_a;
         }
+        
+        let a = unsafe {
+            &(*list_a.start.unwrap().as_ptr()).val
+        };
+
+        let b = unsafe {
+            &(*list_b.start.unwrap().as_ptr()).val
+        };
+
+        let mut pa = list_a.start;
+        let mut pb = list_b.start;
+
+        if a <= b {
+            linkedList.start = pa;
+            pa = unsafe {
+                (*pa.unwrap().as_ptr()).next
+            };
+        } else {
+            linkedList.start = pb;
+            pb = unsafe {
+                (*pb.unwrap().as_ptr()).next
+            };
+        }
+        
+        let mut cur = linkedList.start;
+
+        while pa.is_some() && pb.is_some() {
+            let a = unsafe {
+                &(*pa.unwrap().as_ptr()).val
+            };
+            let b = unsafe {
+                &(*pb.unwrap().as_ptr()).val
+            };
+
+
+            if a <= b {
+                unsafe {
+                    (*cur.unwrap().as_ptr()).next = pa;
+                    cur = pa;
+                    pa = (*pa.unwrap().as_ptr()).next;
+                }
+            
+            } else {
+                unsafe {
+                    (*cur.unwrap().as_ptr()).next = pb;
+                    cur = pb;
+                    pb = (*pb.unwrap().as_ptr()).next;
+                }
+
+            }
+
+
+        }
+
+        if pa.is_some() {
+            unsafe {
+                (*cur.unwrap().as_ptr()).next = pa;
+            }
+            cur = list_a.end;
+        } else if pb.is_some() {
+            unsafe {
+                (*cur.unwrap().as_ptr()).next = pb;
+            }
+            cur = list_b.end;
+        }
+
+        linkedList.end = cur;
+        linkedList.length = list_a.length + list_b.length;
+        
+        linkedList
+		//Self {
+        //    length: 0,
+        //    start: None,
+        //    end: None,
+        //}
 	}
 }
 
