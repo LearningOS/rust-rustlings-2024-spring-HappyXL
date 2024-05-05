@@ -2,7 +2,7 @@
 	queue
 	This question requires you to use queues to implement the functionality of the stac
 */
-// I AM NOT DONE
+// I AM DONE
 
 #[derive(Debug)]
 pub struct Queue<T> {
@@ -55,27 +55,40 @@ impl<T> Default for Queue<T> {
 pub struct myStack<T>
 {
 	//TODO
-	q1:Queue<T>,
-	q2:Queue<T>
+	q1: Queue<T>,
+	q2: Queue<T>
 }
 impl<T> myStack<T> {
     pub fn new() -> Self {
         Self {
 			//TODO
-			q1:Queue::<T>::new(),
-			q2:Queue::<T>::new()
+			q1: Queue::<T>::new(),
+			q2: Queue::<T>::new()
         }
     }
     pub fn push(&mut self, elem: T) {
         //TODO
+        self.q1.enqueue(elem);
+
+        while let Ok(value) = self.q2.dequeue() {
+            self.q1.enqueue(value);
+        }
+        std::mem::swap(&mut self.q1, &mut self.q2);
     }
     pub fn pop(&mut self) -> Result<T, &str> {
         //TODO
-		Err("Stack is empty")
+		// Err("Stack is empty")
+        // self.q2.dequeue()
+        match self.q2.dequeue() {
+            Ok(elem) => Ok(elem),
+            Err(_) => Err("Stack is empty"),
+        }
     }
     pub fn is_empty(&self) -> bool {
 		//TODO
-        true
+        // true
+        self.q2.is_empty()
+        
     }
 }
 
